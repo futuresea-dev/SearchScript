@@ -96,7 +96,7 @@ if (count($argv) > 1) {
                 return $scrape;
             });
             array_shift($scrapResult);
-
+            // search all pages
             for ($page = 1; $page < ($allCount / 100); $page ++ ){
                 $scrapeUrl = $firstUrl."&p=".$page;
                 $crawler = $client->request('GET', $scrapeUrl);
