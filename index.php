@@ -4,15 +4,15 @@ use Goutte\Client;
 
 require 'vendor/autoload.php';
 
-if (count($argv) > 1) {
+//if (count($argv) > 1) {
     try {
         // set client
         $client = new Client();
 
 // set base variables
         $startUrl = "https://search.ipaustralia.gov.au/trademarks/search/advanced";
-        $searchWord = $argv[1];
-//    $searchWord = "google";
+//        $searchWord = $argv[1];
+        $searchWord = "google";
         $allCount = 0;
         $searchUrls = array();
 
@@ -79,16 +79,16 @@ if (count($argv) > 1) {
                     });
                     $statusList = explode(":", $status[0]);
                     if(count($statusList) === 1){
-                        $scrape["status1"] = $statusList[0];
+                        $scrape["status1"] = str_replace("● ", "", $statusList[0]);
                         $scrape["status2"] = "";
                     }
                     else{
-                        $scrape["status1"] = $statusList[0];
+                        $scrape["status1"] = str_replace("● ", "", $statusList[0]);
                         $scrape["status2"] = $statusList[1];
                     }
                     //            get details page url
                     $detailUrls =  $node->filter('.qa-tm-number')->each(function ($node) {
-                        return "https://search.ipaustralia.gov.au/".$node->attr("href");
+                        return "https://search.ipaustralia.gov.au".$node->attr("href");
                     });
                     $scrape["details_page_url"] = $detailUrls[0];
 
@@ -96,6 +96,7 @@ if (count($argv) > 1) {
                 return $scrape;
             });
             array_shift($scrapResult);
+            $totalArray = array("totalCount" => $allCount);
             // search all pages
             for ($page = 1; $page < ($allCount / 100); $page ++ ){
                 $scrapeUrl = $firstUrl."&p=".$page;
@@ -139,17 +140,17 @@ if (count($argv) > 1) {
                             });
                             $statusList = explode(":", $status[0]);
                             if(count($statusList) === 1){
-                                $scrape["status1"] = $statusList[0];
+                                $scrape["status1"] = str_replace("● ", "", $statusList[0]);
                                 $scrape["status2"] = "";
                             }
                             else{
-                                $scrape["status1"] = $statusList[0];
+                                $scrape["status1"] = str_replace("● ", "", $statusList[0]);
                                 $scrape["status2"] = $statusList[1];
                             }
 
                             //            get details page url
                             $detailUrls =  $node->filter('.qa-tm-number')->each(function ($node) {
-                                return "https://search.ipaustralia.gov.au/".$node->attr("href");
+                                return "https://search.ipaustralia.gov.au".$node->attr("href");
                             });
                             $scrape["details_page_url"] = $detailUrls[0];
 
@@ -163,7 +164,7 @@ if (count($argv) > 1) {
                     print_r("please. check network connection.");
                 }
             }
-
+            $scrapResult = array_merge($scrapResult, $totalArray);
             print_r($scrapResult);
         }
         else{
@@ -173,8 +174,8 @@ if (count($argv) > 1) {
         echo 'Caught exception: ',  $e->getMessage(), "\n";
     }
 
-
-}
-else{
-    echo "you have to input first parameter";
-}
+//
+//}
+//else{
+//    echo "you have to input first parameter";
+//}
