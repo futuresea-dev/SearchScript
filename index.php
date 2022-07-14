@@ -4,15 +4,15 @@ use Goutte\Client;
 
 require 'vendor/autoload.php';
 
-//if (count($argv) > 1) {
+if (count($argv) > 1) {
     try {
         // set client
         $client = new Client();
 
 // set base variables
         $startUrl = "https://search.ipaustralia.gov.au/trademarks/search/advanced";
-//        $searchWord = $argv[1];
-        $searchWord = "google";
+        $searchWord = $argv[1];
+//        $searchWord = "google";
         $allCount = 0;
         $searchUrls = array();
 
@@ -38,6 +38,7 @@ require 'vendor/autoload.php';
             });
             // convert all count to int if value is bigger than 2000, set 2000
             $allCount = intval(str_replace(",", "", $allCount[0]));
+            $totalArray = array("totalCount" => $allCount);
             if ($allCount > 2000){
                 $allCount = 2000;
             }
@@ -96,7 +97,7 @@ require 'vendor/autoload.php';
                 return $scrape;
             });
             array_shift($scrapResult);
-            $totalArray = array("totalCount" => $allCount);
+
             // search all pages
             for ($page = 1; $page < ($allCount / 100); $page ++ ){
                 $scrapeUrl = $firstUrl."&p=".$page;
@@ -174,8 +175,8 @@ require 'vendor/autoload.php';
         echo 'Caught exception: ',  $e->getMessage(), "\n";
     }
 
-//
-//}
-//else{
-//    echo "you have to input first parameter";
-//}
+
+}
+else{
+    echo "you have to input first parameter";
+}
