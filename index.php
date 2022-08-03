@@ -22,7 +22,7 @@ if (count($argv) > 1) {
 
         $statusCode = $client->getResponse()->getStatusCode();
 
-        if ($statusCode === 200){
+        if ($statusCode === 200) {
             // find search form
             $form = $crawler->filterXPath('//*[@id="basicSearchForm"]')->form();
 
@@ -39,57 +39,55 @@ if (count($argv) > 1) {
             // convert all count to int if value is bigger than 2000, set 2000
             $allCount = intval(str_replace(",", "", $allCount[0]));
             $totalArray = array("totalCount" => $allCount);
-            if ($allCount > 2000){
+            if ($allCount > 2000) {
                 $allCount = 2000;
             }
 
             // get all views url and result merge.
-            $scrapResult = $crawler->filter('tr')->each(function ($node, $key){
+            $scrapResult = $crawler->filter('tr')->each(function ($node, $key) {
                 $scrape = array();
-                if ($key !== 0){
+                if ($key !== 0) {
                     //  get number
-                    $numbers =  $node->filter('.number')->each(function ($node) {
+                    $numbers = $node->filter('.number')->each(function ($node) {
                         return $node->text();
                     });
                     $scrape["number"] = $numbers[0];
                     // get logo url
-                    $images =  $node->filter('img')->each(function ($node) {
+                    $images = $node->filter('img')->each(function ($node) {
                         return $node->attr("src");
                     });
-                    if (count($images) === 0){
+                    if (count($images) === 0) {
                         $scrape["logo_url"] = "null";
-                    }
-                    else{
+                    } else {
                         $scrape["logo_url"] = $images[0];
                     }
                     // get name
-                    $names =  $node->filter('.words')->each(function ($node) {
+                    $names = $node->filter('.words')->each(function ($node) {
                         return $node->text();
                     });
                     $scrape["name"] = $names[0];
 
                     //     get class
-                    $classes =  $node->filter('.classes ')->each(function ($node) {
+                    $classes = $node->filter('.classes ')->each(function ($node) {
                         return $node->text();
                     });
                     $scrape["classes"] = $classes[0];
 
                     // get status1, status2
-                    $status =  $node->filter('.status')->each(function ($node) {
+                    $status = $node->filter('.status')->each(function ($node) {
                         return $node->text();
                     });
                     $statusList = explode(":", $status[0]);
-                    if(count($statusList) === 1){
+                    if (count($statusList) === 1) {
                         $scrape["status1"] = str_replace("● ", "", $statusList[0]);
                         $scrape["status2"] = "";
-                    }
-                    else{
+                    } else {
                         $scrape["status1"] = str_replace("● ", "", $statusList[0]);
                         $scrape["status2"] = $statusList[1];
                     }
                     //            get details page url
-                    $detailUrls =  $node->filter('.qa-tm-number')->each(function ($node) {
-                        return "https://search.ipaustralia.gov.au".$node->attr("href");
+                    $detailUrls = $node->filter('.qa-tm-number')->each(function ($node) {
+                        return "https://search.ipaustralia.gov.au" . $node->attr("href");
                     });
                     $scrape["details_page_url"] = $detailUrls[0];
 
@@ -99,59 +97,57 @@ if (count($argv) > 1) {
             array_shift($scrapResult);
 
             // search all pages
-            for ($page = 1; $page < ($allCount / 100); $page ++ ){
-                $scrapeUrl = $firstUrl."&p=".$page;
+            for ($page = 1; $page < ($allCount / 100); $page++) {
+                $scrapeUrl = $firstUrl . "&p=" . $page;
                 $crawler = $client->request('GET', $scrapeUrl);
                 //            check get response status code
                 $statusCode = $client->getResponse()->getStatusCode();
-                if ($statusCode === 200){
-                    $result = $crawler->filter('tr')->each(function ($node, $key){
+                if ($statusCode === 200) {
+                    $result = $crawler->filter('tr')->each(function ($node, $key) {
                         $scrape = array();
-                        if ($key !== 0){
+                        if ($key !== 0) {
                             //  get number
-                            $numbers =  $node->filter('.number')->each(function ($node) {
+                            $numbers = $node->filter('.number')->each(function ($node) {
                                 return $node->text();
                             });
                             $scrape["number"] = $numbers[0];
                             // get logo url
-                            $images =  $node->filter('.image')->each(function ($node) {
+                            $images = $node->filter('img')->each(function ($node) {
                                 return $node->attr("src");
                             });
-                            if (count($images) === 0){
+                            if (count($images) === 0) {
                                 $scrape["logo_url"] = "null";
-                            }
-                            else{
+                            } else {
                                 $scrape["logo_url"] = $images[0];
                             }
                             // get name
-                            $names =  $node->filter('.words')->each(function ($node) {
+                            $names = $node->filter('.words')->each(function ($node) {
                                 return $node->text();
                             });
                             $scrape["name"] = $names[0];
 
                             //     get class
-                            $classes =  $node->filter('.classes ')->each(function ($node) {
+                            $classes = $node->filter('.classes ')->each(function ($node) {
                                 return $node->text();
                             });
                             $scrape["classes"] = $classes[0];
 
                             // get status1, status2
-                            $status =  $node->filter('.status')->each(function ($node) {
+                            $status = $node->filter('.status')->each(function ($node) {
                                 return $node->text();
                             });
                             $statusList = explode(":", $status[0]);
-                            if(count($statusList) === 1){
+                            if (count($statusList) === 1) {
                                 $scrape["status1"] = str_replace("● ", "", $statusList[0]);
                                 $scrape["status2"] = "";
-                            }
-                            else{
+                            } else {
                                 $scrape["status1"] = str_replace("● ", "", $statusList[0]);
                                 $scrape["status2"] = $statusList[1];
                             }
 
                             //            get details page url
-                            $detailUrls =  $node->filter('.qa-tm-number')->each(function ($node) {
-                                return "https://search.ipaustralia.gov.au".$node->attr("href");
+                            $detailUrls = $node->filter('.qa-tm-number')->each(function ($node) {
+                                return "https://search.ipaustralia.gov.au" . $node->attr("href");
                             });
                             $scrape["details_page_url"] = $detailUrls[0];
 
@@ -160,23 +156,20 @@ if (count($argv) > 1) {
                     });
                     array_shift($result);
                     $scrapResult = array_merge($scrapResult, $result);
-                }
-                else{
+                } else {
                     print_r("please. check network connection.");
                 }
             }
             $scrapResult = array_merge($scrapResult, $totalArray);
             print_r($scrapResult);
-        }
-        else{
+        } else {
             print_r("please. check network connection.");
         }
     } catch (Exception $e) {
-        echo 'Caught exception: ',  $e->getMessage(), "\n";
+        echo 'Caught exception: ', $e->getMessage(), "\n";
     }
 
 
-}
-else{
+} else {
     echo "you have to input first parameter";
 }
