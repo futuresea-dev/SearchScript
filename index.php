@@ -53,7 +53,7 @@ if (count($argv) > 1) {
                     });
                     $scrape["number"] = $numbers[0];
                     // get logo url
-                    $images =  $node->filter('.image')->each(function ($node) {
+                    $images =  $node->filter('img')->each(function ($node) {
                         return $node->attr("src");
                     });
                     if (count($images) === 0){
